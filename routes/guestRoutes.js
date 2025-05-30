@@ -124,5 +124,18 @@ router.get('/count', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch guest count' });
   }
 });
+// ✅ Add to your routes/guestRoutes.js or wherever guests are handled
+// ✅ Corrected: Fetch all guests for a table
+router.get('/', async (req, res) => {
+  const { restaurantId, tableNumber } = req.query;
+  try {
+    const guests = await Guest.find({ restaurantId, tableNumber: Number(tableNumber) });
+    res.json(guests);
+  } catch (err) {
+    console.error('❌ Failed to fetch guests:', err);
+    res.status(500).json({ error: 'Failed to fetch guests' });
+  }
+});
+
 
 module.exports = router;
