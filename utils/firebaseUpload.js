@@ -2,6 +2,9 @@ const { v4: uuidv4 } = require('uuid');
 const admin = require('firebase-admin');
 
 if (!admin.apps.length) {
+
+  console.log('🔥 ENV FIREBASE_CONFIG_BASE64 present:', !!process.env.FIREBASE_CONFIG_BASE64);
+
   const decoded = Buffer.from(process.env.FIREBASE_CONFIG_BASE64, 'base64').toString('utf-8');
   const serviceAccount = JSON.parse(decoded);
 
