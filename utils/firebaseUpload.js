@@ -1,5 +1,6 @@
 const { v4: uuidv4 } = require('uuid');
 const admin = require('firebase-admin');
+require('dotenv').config();
 
 if (!admin.apps.length) {
 
