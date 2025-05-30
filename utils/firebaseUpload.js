@@ -1,22 +1,13 @@
 const { v4: uuidv4 } = require('uuid');
 const admin = require('firebase-admin');
-const fs = require('fs');
-const path = require('path');
-
-// TEMP path to store decoded JSON
-const tempPath = path.join(__dirname, 'firebaseServiceAccount.json');
-
-if (process.env.FIREBASE_CONFIG_BASE64) {
-  const decoded = Buffer.from(process.env.FIREBASE_CONFIG_BASE64, 'base64').toString('utf-8');
-  fs.writeFileSync(tempPath, decoded);
-}
 
 if (!admin.apps.length) {
-  const serviceAccount = require(tempPath);
+  const decoded = Buffer.from(process.env.FIREBASE_CONFIG_BASE64, 'base64').toString('utf-8');
+  const serviceAccount = JSON.parse(decoded);
 
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
-    storageBucket: 'qrmenuapp-bc491.appspot.com'
+    storageBucket: 'qrmenuapp-bc491.appspot.com',
   });
 }
 
@@ -28,8 +19,8 @@ const uploadImageToFirebase = async (file, folder = 'menuImages') => {
     const blob = bucket.file(filename);
     const blobStream = blob.createWriteStream({
       metadata: {
-        contentType: file.mimetype
-      }
+        contentType: file.mimetype,
+      },
     });
 
     blobStream.on('error', (err) => {
