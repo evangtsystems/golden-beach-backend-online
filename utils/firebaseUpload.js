@@ -1,14 +1,22 @@
 const { v4: uuidv4 } = require('uuid');
 const admin = require('firebase-admin');
+const fs = require('fs');
 const path = require('path');
-const serviceAccount = require('C:/Users/evangelos.lampos/Downloads/qrmenuapp-bc491-77cea674f57e.json');
 
+// TEMP path to store decoded JSON
+const tempPath = path.join(__dirname, 'firebaseServiceAccount.json');
+
+if (process.env.FIREBASE_CONFIG_BASE64) {
+  const decoded = Buffer.from(process.env.FIREBASE_CONFIG_BASE64, 'base64').toString('utf-8');
+  fs.writeFileSync(tempPath, decoded);
+}
 
 if (!admin.apps.length) {
+  const serviceAccount = require(tempPath);
+
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
-   storageBucket: 'qrmenuapp-bc491.appspot.com'
-
+    storageBucket: 'qrmenuapp-bc491.appspot.com'
   });
 }
 
