@@ -5,7 +5,8 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   restaurantId: { type: String, required: true },
-  restaurantName: { type: String, required: true }
+  restaurantName: { type: String, required: true },
+  isAdmin: { type: Boolean, default: false }  // <-- Add this line
 });
 
 // Automatically hash passwords before saving

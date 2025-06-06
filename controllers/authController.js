@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 // Secret key for JWT (store in environment variable in production)
-const JWT_SECRET = 'your_super_secret_key';
+const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret'; // fallback only for dev/testing
 
 // POST /api/auth/login
 exports.login = async (req, res) => {
@@ -14,6 +14,8 @@ exports.login = async (req, res) => {
     if (!user) return res.status(401).json({ error: 'Invalid email or password' });
 
     const isMatch = await bcrypt.compare(password, user.password);
+console.log({ password, hashed: user.password, isMatch });
+
     if (!isMatch) return res.status(401).json({ error: 'Invalid email or password' });
 
     const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '7d' });
