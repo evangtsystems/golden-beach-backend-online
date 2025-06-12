@@ -9,20 +9,22 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 router.post('/', upload.single('image'), async (req, res) => {
-
   try {
     const { name, description, price, category, restaurantId } = req.body;
 
-    // Upload to Firebase and get URL
-    const imageUrl = await uploadImageToFirebase(req.file, 'menuImages');
+    let imageUrl = '';
 
-    // Save to MongoDB
+    // ✅ Only upload if an image was actually provided
+    if (req.file) {
+      imageUrl = await uploadImageToFirebase(req.file, 'menuImages');
+    }
+
     const newItem = new MenuItem({
       name,
       description,
       price: parseFloat(price),
       category,
-      imageUrl,
+      imageUrl, // Will be empty string if no image was uploaded
       restaurantId
     });
 
@@ -34,6 +36,7 @@ router.post('/', upload.single('image'), async (req, res) => {
     res.status(500).json({ success: false, message: 'Upload failed' });
   }
 });
+
 // GET /menu-item?restaurantId=xyz
 router.get('/', async (req, res) => {
 
@@ -85,6 +88,23 @@ router.put('/:id', upload.single('image'), async (req, res) => {
   } catch (err) {
     console.error('Update failed:', err);
     res.status(500).json({ success: false, message: 'Update failed' });
+  }
+});
+
+router.delete('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const deletedItem = await MenuItem.findByIdAndDelete(id);
+
+    if (!deletedItem) {
+      return res.status(404).json({ success: false, message: 'Menu item not found' });
+    }
+
+    res.json({ success: true, message: 'Menu item deleted' });
+  } catch (err) {
+    console.error('Delete failed:', err);
+    res.status(500).json({ success: false, message: 'Delete failed' });
   }
 });
 

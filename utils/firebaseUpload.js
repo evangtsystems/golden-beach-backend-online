@@ -17,6 +17,10 @@ if (!admin.apps.length) {
 const bucket = admin.storage().bucket();
 
 const uploadImageToFirebase = async (file, folder = 'menuImages') => {
+  if (!file) {
+    throw new Error('No file provided for Firebase upload');
+  }
+
   return new Promise((resolve, reject) => {
     const filename = `${folder}/${uuidv4()}-${file.originalname}`;
     const blob = bucket.file(filename);
@@ -26,18 +30,14 @@ const uploadImageToFirebase = async (file, folder = 'menuImages') => {
       },
     });
 
-    blobStream.on('error', (err) => {
-      console.error('Upload failed:', err);
-      reject(err);
-    });
+    blobStream.on('error', (err) => reject(err));
 
     blobStream.on('finish', async () => {
       try {
-        await blob.makePublic(); // 🔓 Make it publicly accessible
+        await blob.makePublic();
         const publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
         resolve(publicUrl);
       } catch (err) {
-        console.error('Failed to make public:', err);
         reject(err);
       }
     });
@@ -45,5 +45,6 @@ const uploadImageToFirebase = async (file, folder = 'menuImages') => {
     blobStream.end(file.buffer);
   });
 };
+
 
 module.exports = { uploadImageToFirebase };
