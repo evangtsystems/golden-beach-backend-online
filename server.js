@@ -8,6 +8,9 @@ const orderRoutes = require('./routes/orders');
 const guestRoutes = require('./routes/guestRoutes');
 const authRoutes = require('./routes/authRoutes'); // ✅ NEW
 const uploadRoutes = require('./routes/uploadRoutes');
+const restaurantRoutes = require('./routes/restaurantRoutes');
+
+
 
 dotenv.config();
 
@@ -27,6 +30,8 @@ app.use('/api/menu-item', uploadRoutes);
 app.use('/api/guests', guestRoutes);
 app.use('/api/auth', authRoutes); // ✅ NEW
 app.use('/api/orders', orderRoutes);
+app.use('/api/restaurant', restaurantRoutes);
+
 
 mongoose.connect(process.env.MONGO_URI)
   .then(() => app.listen(process.env.PORT, () => console.log(`Server running on port ${process.env.PORT}`)))
