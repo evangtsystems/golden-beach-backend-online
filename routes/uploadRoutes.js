@@ -57,7 +57,7 @@ router.get('/', async (req, res) => {
 router.put('/:id', upload.single('image'), async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, description, price, category } = req.body;
+    const { name, description, price, category, removeImage } = req.body;
 
     const updatedFields = {
       name,
@@ -66,15 +66,20 @@ router.put('/:id', upload.single('image'), async (req, res) => {
       category,
     };
 
+    if (removeImage === 'true') {
+      updatedFields.imageUrl = ''; // or `null`, depending on your schema
+    }
+
     if (req.file) {
-      // If there's a new image uploaded, upload to Firebase and update URL
       const imageUrl = await uploadImageToFirebase(req.file, 'menuImages');
       updatedFields.imageUrl = imageUrl;
     }
 
     const updatedItem = await MenuItem.findByIdAndUpdate(id, updatedFields, { new: true });
 
-    if (!updatedItem) return res.status(404).json({ success: false, message: 'Menu item not found' });
+    if (!updatedItem) {
+      return res.status(404).json({ success: false, message: 'Menu item not found' });
+    }
 
     res.json({ success: true, item: updatedItem });
   } catch (err) {
@@ -82,6 +87,7 @@ router.put('/:id', upload.single('image'), async (req, res) => {
     res.status(500).json({ success: false, message: 'Update failed' });
   }
 });
+
 
 
 

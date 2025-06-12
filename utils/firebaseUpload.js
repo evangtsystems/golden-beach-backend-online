@@ -1,9 +1,8 @@
+require('dotenv').config();
 const { v4: uuidv4 } = require('uuid');
 const admin = require('firebase-admin');
-require('dotenv').config();
 
 if (!admin.apps.length) {
-
   console.log('🔥 ENV FIREBASE_CONFIG_BASE64 present:', !!process.env.FIREBASE_CONFIG_BASE64);
 
   const decoded = Buffer.from(process.env.FIREBASE_CONFIG_BASE64, 'base64').toString('utf-8');
@@ -11,7 +10,7 @@ if (!admin.apps.length) {
 
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
-    storageBucket: 'qrmenuapp-bc491.appspot.com',
+    storageBucket: 'qrmenuapp-bc491', // ✅ Full correct bucket name
   });
 }
 
@@ -33,8 +32,14 @@ const uploadImageToFirebase = async (file, folder = 'menuImages') => {
     });
 
     blobStream.on('finish', async () => {
-      const publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
-      resolve(publicUrl);
+      try {
+        await blob.makePublic(); // 🔓 Make it publicly accessible
+        const publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
+        resolve(publicUrl);
+      } catch (err) {
+        console.error('Failed to make public:', err);
+        reject(err);
+      }
     });
 
     blobStream.end(file.buffer);
