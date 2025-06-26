@@ -6,7 +6,7 @@ const User = require('./models/User'); // Adjust path if needed
 async function setAdmin() {
   await mongoose.connect(process.env.MONGO_URI);
 
-  const email = 'admin@example.com';
+  const email = 'admin@goldenbeach.com';
 
   const result = await User.updateOne(
     { email },
