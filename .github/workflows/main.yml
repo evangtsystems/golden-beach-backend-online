@@ -9,6 +9,7 @@ jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      - name: Ping Render backend
+      - name: Ping Render backend with user agent
         run: |
-          curl -s -o /dev/null -w "%{http_code}" https://golden-beach-backend-online.onrender.com/
+          curl -A "Mozilla/5.0" --max-time 15 https://golden-beach-backend-online.onrender.com/api/health
+
