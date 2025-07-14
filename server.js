@@ -32,6 +32,10 @@ app.use('/api/auth', authRoutes); // ✅ NEW
 app.use('/api/orders', orderRoutes);
 app.use('/api/restaurant', restaurantRoutes);
 
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
 
 mongoose.connect(process.env.MONGO_URI)
   .then(() => app.listen(process.env.PORT, () => console.log(`Server running on port ${process.env.PORT}`)))
