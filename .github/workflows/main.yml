@@ -2,8 +2,8 @@ name: Ping Render URL
 
 on:
   schedule:
-    - cron: '*/20 * * * *' # every 20 minutes
-  workflow_dispatch: # allows manual trigger
+    - cron: '*/20 * * * *'  # Every 20 minutes
+  workflow_dispatch:  # Allows manual trigger via GitHub UI
 
 jobs:
   ping:
@@ -11,5 +11,4 @@ jobs:
     steps:
       - name: Ping Render backend with user agent
         run: |
-          curl -A "Mozilla/5.0" --max-time 15 https://golden-beach-backend-online.onrender.com/api/health
-
+          curl -A "Mozilla/5.0" --max-time 15 https://golden-beach-backend-online.onrender.com/api/health || echo "Ping failed"
