@@ -1,7 +1,7 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy Node.js app to Azure Web App - GoldenBeachQR1
+name: Build and deploy Node.js app to Azure Web App - GoldenBeachQR
 
 on:
   push:
@@ -21,7 +21,7 @@ jobs:
       - name: Set up Node.js version
         uses: actions/setup-node@v3
         with:
-          node-version: '24.x'
+          node-version: '20.x'
 
       - name: npm install, build, and test
         run: |
@@ -52,14 +52,17 @@ jobs:
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_61AD89706B1A4E26A8795ADF7DD08712 }}
+
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_401BFC50CBCF4076A8F14C352DDD82F4 }}
+
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_971BD51DC98F434882410DB2ED117D0F }}
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'GoldenBeachQR1'
+          app-name: 'GoldenBeachQR'
           slot-name: 'Production'
           package: .
+          
           
